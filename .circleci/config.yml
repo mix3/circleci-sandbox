@@ -3,7 +3,7 @@ jobs:
 
   build:
     docker:
-      image: circleci/golang:1.10.1
+      - image: circleci/golang:1.10.1
     environment:
       TZ: "/usr/share/zoneinfo/Asia/Tokyo"
     working_directory: /go/src/github.com/mix3/circleci-sandbox
@@ -38,7 +38,7 @@ jobs:
 
   test:
     docker:
-      image: circleci/golang:1.10.1
+      - image: circleci/golang:1.10.1
     environment:
       TZ: "/usr/share/zoneinfo/Asia/Tokyo"
     working_directory: /go/src/github.com/mix3/circleci-sandbox
