@@ -2,7 +2,7 @@ version: 2
 jobs:
 
   build:
-    machine:
+    docker:
       image: circleci/golang:1.10.1
     environment:
       TZ: "/usr/share/zoneinfo/Asia/Tokyo"
@@ -37,7 +37,7 @@ jobs:
             - .
 
   test:
-    machine:
+    docker:
       image: circleci/golang:1.10.1
     environment:
       TZ: "/usr/share/zoneinfo/Asia/Tokyo"
