@@ -48,10 +48,11 @@ jobs:
       - run:
           name: docker-compose up
           command: |
-            cd docker && docker-compose up --no-start
-            cd docker && docker cp initializer/. $(docker-compose ps -q mysql):/docker-entrypoint-initdb.d
-            cd docker && docker cp mysql/conf/. $(docker-compose ps -q mysql):/etc/mysql/conf.d
-            cd docker && docker-compose up -d
+            cd docker
+            docker-compose up --no-start
+            docker cp initializer/. $(docker-compose ps -q mysql):/docker-entrypoint-initdb.d
+            docker cp mysql/conf/. $(docker-compose ps -q mysql):/etc/mysql/conf.d
+            docker-compose up -d
       - run:
           name: wait for mysql
           command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
