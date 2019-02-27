@@ -9,6 +9,8 @@ jobs:
     working_directory: /go/src/github.com/mix3/circleci-sandbox
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - restore_cache:
           keys:
             - v1-vendor-{{ checksum "Gopkg.lock" }}
@@ -45,7 +47,8 @@ jobs:
     steps:
       - attach_workspace: # workspaceをアタッチする
           at: /go
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: docker-compose up
           command: |
