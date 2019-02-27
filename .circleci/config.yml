@@ -1,0 +1,69 @@
+version: 2
+jobs:
+
+  build:
+    machine:
+      image: circleci/golang:1.10.1
+    environment:
+      TZ: "/usr/share/zoneinfo/Asia/Tokyo"
+    working_directory: /go/src/github.com/mix3/circleci-sandbox
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-vendor-{{ checksum "Gopkg.lock" }}
+            - v1-vendor
+            - v1-dep
+      - run:
+          name: dep ensure
+          command: |
+            if [ ! -d vendor ]; then
+              if ! type dep >/dev/null 2>&1; then
+                go get -u github.com/golang/dep/cmd/dep
+              fi
+              dep ensure --vendor-only
+            fi
+      - save_cache:
+          key: v1-vendor-{{ checksum "Gopkg.lock" }}
+          paths:
+            - vendor
+      - save_cache:
+          key: v1-dep
+          paths:
+            - /go/bin/dep
+      - persist_to_workspace:
+          root: /go
+          paths:
+            - .
+
+  test:
+    machine:
+      image: circleci/golang:1.10.1
+    environment:
+      TZ: "/usr/share/zoneinfo/Asia/Tokyo"
+    working_directory: /go/src/github.com/mix3/circleci-sandbox
+    steps:
+      - attach_workspace: # workspaceをアタッチする
+          at: /go
+      - run:
+          name: docker-compose up
+          command: |
+            cd docker && docker-compose up --no-start
+            cd docker && docker cp initializer/. $(docker-compose ps -q mysql):/docker-entrypoint-initdb.d
+            cd docker && docker cp mysql/conf/. $(docker-compose ps -q mysql):/etc/mysql/conf.d
+            cd docker && docker-compose up -d
+      - run:
+          name: wait for mysql
+          commmand: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
+      - run:
+          name: docker-compose down
+          command: cd docker && docker-compose down
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
