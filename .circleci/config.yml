@@ -55,7 +55,7 @@ jobs:
             cd docker && docker-compose up -d
       - run:
           name: wait for mysql
-          commmand: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
+          command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
       - run:
           name: docker-compose down
           command: cd docker && docker-compose down
