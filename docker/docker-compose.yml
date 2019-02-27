@@ -1,0 +1,10 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      TZ: "/usr/share/zoneinfo/Asia/Tokyo"
+    ports:
+      - "3307:3306"
